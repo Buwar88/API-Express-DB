@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -8,6 +6,13 @@ const port = process.env.PORT || 3000;
 // Require para usar Prisma
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+
+const cors = require("cors");
+const corsOptions = {
+  origin: "http://localhost:8081"
+};
+
+app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
   res.json({message: 'alive'});
@@ -92,4 +97,43 @@ app.delete('/commanders/:id', async (req, res) => {
 	const id = parseInt(req.params.id);
 	await prisma.commander.delete({where: {id: id}});
 	return res.json({message: "Eliminado correctamente"});
+});
+
+app.get('/MissionCommanders', async (req, res) => {
+  const allMissionCommanders =  await prisma.missionCommander.findMany({});
+  res.json(allMissionCommanders);
+});
+app.get('/MissionCommanders/:id', async (req, res) => {
+  const id = req.params.id;
+  const mCommander = await prisma.missionCommander.findUnique({where: {id: parseInt(id)}});
+  res.json(mCommander);
+});
+app.post('/MissionCommanders', async (req, res) => {
+  const mCommander = {
+    name: req.body.name,
+    username: req.body.username,
+    mainStack: req.body.mainStack
+   };
+  const message = 'Mission Commander creado.';
+  await prisma.missionCommander.create({data: mCommander});
+  return res.json({message});
+});
+app.put('/MissionCommanders/:id', async (req, res) => {
+const id = parseInt(req.params.id);
+
+await prisma.missionCommander.update({
+  where: {
+    id: id
+  },
+  data: {
+    mainStack: req.body.mainStack
+  }
+})
+
+return res.json({message: "Actualizado correctamente"});
+});
+app.delete('/MissionCommanders/:id', async (req, res) => {
+const id = parseInt(req.params.id);
+await prisma.missionCommander.delete({where: {id: id}});
+return res.json({message: "Eliminado correctamente"});
 });

@@ -89,8 +89,26 @@ const prisma = new PrismaClient();
                   enrollments: 2
         },
       });
+      const missionCommander1 = await prisma.missionCommander.upsert({
+        where: { name: 'Mission Commander 1' },
+        update: {},
+        create: {
+          name: 'Mission Commander 1',
+                  username: 'Comandjolote1',
+                  mainStack: 'NodeJS'
+        },
+      });
+      const missionCommander2 = await prisma.missionCommander.upsert({
+        where: { name: 'Mission Commander 2' },
+        update: {},
+        create: {
+          name: 'Mission Commander 2',
+                  username: 'Comandjolote2',
+                  mainStack: 'NodeJS'
+        },
+      });
 
-    console.log('Create 5 explorers');
+    console.log('Seeds insertados');
   } catch(e) {
     console.error(e);
     process.exit(1);
